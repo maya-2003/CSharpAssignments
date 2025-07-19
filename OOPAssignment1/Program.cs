@@ -229,7 +229,7 @@ namespace OOPAssignment1
 
             do
             {
-                Console.Write("Enter Security Level (Guest, Developer, Secretary, DBA): ");
+                Console.Write("Enter Security Level: ");
                 securityInput = Console.ReadLine();
             } while (!Enum.TryParse<Security>(securityInput, true, out security));
 
