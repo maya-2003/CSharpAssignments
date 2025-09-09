@@ -4,6 +4,7 @@ using EFCoreAssignment01.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EFCoreAssignment01.Data.Migrations
 {
     [DbContext(typeof(ItiDbContext))]
-    partial class ItiDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250909072909_AddFKToStudent")]
+    partial class AddFKToStudent
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -43,12 +46,10 @@ namespace EFCoreAssignment01.Data.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("varchar(50)");
 
-                    b.Property<int>("TopicId")
+                    b.Property<int?>("Top_Id")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("TopicId");
 
                     b.ToTable("Courses");
                 });
@@ -68,8 +69,6 @@ namespace EFCoreAssignment01.Data.Migrations
 
                     b.HasKey("Course_Id", "Inst_Id");
 
-                    b.HasIndex("Inst_Id");
-
                     b.ToTable("Course_Insts");
                 });
 
@@ -86,7 +85,7 @@ namespace EFCoreAssignment01.Data.Migrations
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("GETDATE()");
 
-                    b.Property<int?>("Ins_Id")
+                    b.Property<int>("Ins_Id")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
@@ -95,10 +94,6 @@ namespace EFCoreAssignment01.Data.Migrations
                         .HasColumnType("varchar");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("Ins_Id")
-                        .IsUnique()
-                        .HasFilter("[Ins_Id] IS NOT NULL");
 
                     b.ToTable("Departments");
                 });
@@ -119,7 +114,7 @@ namespace EFCoreAssignment01.Data.Migrations
                     b.Property<decimal>("Bonus")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int>("DepartmentId")
+                    b.Property<int>("Dept_Id")
                         .HasColumnType("int");
 
                     b.Property<decimal>("HourRate")
@@ -134,8 +129,6 @@ namespace EFCoreAssignment01.Data.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("DepartmentId");
 
                     b.ToTable("Instructors");
                 });
@@ -152,8 +145,6 @@ namespace EFCoreAssignment01.Data.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Stud_Id", "Course_Id");
-
-                    b.HasIndex("Course_Id");
 
                     b.ToTable("Stud_Courses");
                 });
@@ -209,76 +200,6 @@ namespace EFCoreAssignment01.Data.Migrations
                     b.ToTable("Topics");
                 });
 
-            modelBuilder.Entity("EFCoreAssignment01.Data.Models.Course", b =>
-                {
-                    b.HasOne("EFCoreAssignment01.Data.Models.Topic", "Topic")
-                        .WithMany("Courses")
-                        .HasForeignKey("TopicId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Topic");
-                });
-
-            modelBuilder.Entity("EFCoreAssignment01.Data.Models.Course_Inst", b =>
-                {
-                    b.HasOne("EFCoreAssignment01.Data.Models.Course", "Course")
-                        .WithMany()
-                        .HasForeignKey("Course_Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("EFCoreAssignment01.Data.Models.Instructor", "Instructor")
-                        .WithMany()
-                        .HasForeignKey("Inst_Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Course");
-
-                    b.Navigation("Instructor");
-                });
-
-            modelBuilder.Entity("EFCoreAssignment01.Data.Models.Department", b =>
-                {
-                    b.HasOne("EFCoreAssignment01.Data.Models.Instructor", "Head")
-                        .WithOne("ManagedDepartment")
-                        .HasForeignKey("EFCoreAssignment01.Data.Models.Department", "Ins_Id")
-                        .OnDelete(DeleteBehavior.NoAction);
-
-                    b.Navigation("Head");
-                });
-
-            modelBuilder.Entity("EFCoreAssignment01.Data.Models.Instructor", b =>
-                {
-                    b.HasOne("EFCoreAssignment01.Data.Models.Department", "Department")
-                        .WithMany("instructors")
-                        .HasForeignKey("DepartmentId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Department");
-                });
-
-            modelBuilder.Entity("EFCoreAssignment01.Data.Models.Stud_Course", b =>
-                {
-                    b.HasOne("EFCoreAssignment01.Data.Models.Course", "Course")
-                        .WithMany()
-                        .HasForeignKey("Course_Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("EFCoreAssignment01.Data.Models.Student", "Student")
-                        .WithMany()
-                        .HasForeignKey("Stud_Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Course");
-
-                    b.Navigation("Student");
-                });
-
             modelBuilder.Entity("EFCoreAssignment01.Data.Models.Student", b =>
                 {
                     b.HasOne("EFCoreAssignment01.Data.Models.Department", "Department")
@@ -288,21 +209,6 @@ namespace EFCoreAssignment01.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Department");
-                });
-
-            modelBuilder.Entity("EFCoreAssignment01.Data.Models.Department", b =>
-                {
-                    b.Navigation("instructors");
-                });
-
-            modelBuilder.Entity("EFCoreAssignment01.Data.Models.Instructor", b =>
-                {
-                    b.Navigation("ManagedDepartment");
-                });
-
-            modelBuilder.Entity("EFCoreAssignment01.Data.Models.Topic", b =>
-                {
-                    b.Navigation("Courses");
                 });
 #pragma warning restore 612, 618
         }

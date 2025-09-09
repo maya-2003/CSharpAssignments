@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Reflection.Emit;
 
 namespace EFCoreAssignment01.Data.Configurations
 {
@@ -29,7 +30,12 @@ namespace EFCoreAssignment01.Data.Configurations
 
             builder.Property(i => i.HourRate)
                 .HasColumnType("decimal(10,2)");
-            builder.Property(i => i.Dept_Id);
+
+            builder.HasOne(i => i.Department)
+                      .WithMany(d => d.instructors)
+                      .HasForeignKey(i => i.DepartmentId)
+                      .IsRequired()
+                      .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

@@ -14,6 +14,9 @@ namespace EFCoreAssignment01.Data.Models
         public decimal Salary { get; set; }
         public string Address { get; set; }
         public decimal HourRate { get; set; }
-        public int Dept_Id { get; set; }
+        public int DepartmentId { get; set; }
+        public required Department Department { get; set; }
+
+        public Department? ManagedDepartment { get; set; }
     }
 }

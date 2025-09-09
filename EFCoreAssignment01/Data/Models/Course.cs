@@ -22,6 +22,7 @@ namespace EFCoreAssignment01.Data.Models
         [Column(TypeName = "varchar(200)")]
         [StringLength(200)]
         public string Description { get; set; }
-        public int? Top_Id { get; set; }
+        public int TopicId { get; set; }
+        public required Topic Topic { get; set; }
     }
 }

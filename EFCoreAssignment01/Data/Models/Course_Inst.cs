@@ -9,7 +9,9 @@ namespace EFCoreAssignment01.Data.Models
     internal class Course_Inst
     {
         public int Inst_Id { get; set; }
+        public Instructor Instructor { get; set; }
         public int Course_Id { get; set; }
+        public Course Course { get; set; }
         public string Evaluate { get; set; }
     }
 }

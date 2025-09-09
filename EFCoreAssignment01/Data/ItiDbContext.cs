@@ -28,6 +28,17 @@ namespace EFCoreAssignment01.Data
                 .HasColumnType("varchar")
                 .HasMaxLength(100)
                 .IsRequired();
+                ci.HasOne(e => e.Instructor)
+                  .WithMany()
+                  .HasForeignKey(e => e.Inst_Id)
+                  .IsRequired()
+                  .OnDelete(DeleteBehavior.Cascade);
+
+                ci.HasOne(e => e.Course)
+                  .WithMany()
+                  .HasForeignKey(e => e.Course_Id)
+                  .IsRequired()
+                  .OnDelete(DeleteBehavior.Cascade);
             }
             );
 
@@ -35,7 +46,17 @@ namespace EFCoreAssignment01.Data
                 sc.HasKey(e => new { e.Stud_Id, e.Course_Id });
                 sc.Property(nameof(Stud_Course.Grade))
                 .IsRequired();
+                sc.HasOne(e => e.Student)
+                  .WithMany()
+                  .HasForeignKey(e => e.Stud_Id)
+                  .IsRequired()
+                  .OnDelete(DeleteBehavior.Cascade);
 
+                sc.HasOne(e => e.Course)
+                  .WithMany()
+                  .HasForeignKey(e => e.Course_Id)
+                  .IsRequired()
+                  .OnDelete(DeleteBehavior.Cascade);
             }
             );
 

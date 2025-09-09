@@ -13,6 +13,7 @@ namespace EFCoreAssignment01.Data.Models
         public string LName { get; set; }
         public string Address { get; set; }
         public int Age { get; set; }
-        public int? Dp_Id { get; set; }
+        public int DepartmentId { get; set; }
+        public required Department Department { get; set; }
     }
 }

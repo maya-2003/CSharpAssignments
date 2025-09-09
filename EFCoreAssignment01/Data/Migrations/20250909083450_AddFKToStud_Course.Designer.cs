@@ -4,6 +4,7 @@ using EFCoreAssignment01.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EFCoreAssignment01.Data.Migrations
 {
     [DbContext(typeof(ItiDbContext))]
-    partial class ItiDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250909083450_AddFKToStud_Course")]
+    partial class AddFKToStud_Course
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -67,8 +70,6 @@ namespace EFCoreAssignment01.Data.Migrations
                         .HasColumnType("varchar");
 
                     b.HasKey("Course_Id", "Inst_Id");
-
-                    b.HasIndex("Inst_Id");
 
                     b.ToTable("Course_Insts");
                 });
@@ -218,25 +219,6 @@ namespace EFCoreAssignment01.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Topic");
-                });
-
-            modelBuilder.Entity("EFCoreAssignment01.Data.Models.Course_Inst", b =>
-                {
-                    b.HasOne("EFCoreAssignment01.Data.Models.Course", "Course")
-                        .WithMany()
-                        .HasForeignKey("Course_Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("EFCoreAssignment01.Data.Models.Instructor", "Instructor")
-                        .WithMany()
-                        .HasForeignKey("Inst_Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Course");
-
-                    b.Navigation("Instructor");
                 });
 
             modelBuilder.Entity("EFCoreAssignment01.Data.Models.Department", b =>

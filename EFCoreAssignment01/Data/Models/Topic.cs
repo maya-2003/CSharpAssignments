@@ -18,6 +18,7 @@ namespace EFCoreAssignment01.Data.Models
         [Column(TypeName = "varchar(50)")]
         [StringLength(50)]
         public string Name { get; set; }
+        public List<Course> Courses { get; set; }
 
     }
 }

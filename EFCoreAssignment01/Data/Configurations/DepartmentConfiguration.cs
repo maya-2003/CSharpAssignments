@@ -17,10 +17,15 @@ namespace EFCoreAssignment01.Data.Configurations
             builder.Property(d => d.Name)
                 .HasColumnType("varchar")
                 .HasMaxLength(100);
-            builder.Property(d => d.Ins_Id);
+    
             builder.Property(d => d.HiringDate)
                 .HasDefaultValueSql("GETDATE()");
 
+            builder.HasOne(d => d.Head)
+               .WithOne(i => i.ManagedDepartment)
+               .HasForeignKey<Department>(d => d.Ins_Id)  
+               .IsRequired(false)                         
+               .OnDelete(DeleteBehavior.NoAction);
         }
     }
 }
