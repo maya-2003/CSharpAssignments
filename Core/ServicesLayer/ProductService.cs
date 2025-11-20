@@ -8,6 +8,8 @@ using System.Text;
 using System.Threading.Tasks;
 using DomainLayer.Models;
 using AutoMapper;
+using ServicesLayer.Specification;
+using Shared;
 
 
 namespace ServicesLayer
@@ -24,10 +26,15 @@ namespace ServicesLayer
 
         }
 
-        public async Task<IEnumerable<ProductDto>> GetAllProductsAsync()
+        public async Task<PaginatedResult<ProductDto>> GetAllProductsAsync(ProductQueryParams queryParams)
         {
-            var products =  await _unitOfWork.GetRepository<Product, int>().GetALLAsync();
-            return _mapper.Map<IEnumerable<ProductDto>>(products);
+            var repo = _unitOfWork.GetRepository<Product, int>();
+            var specs = new ProductWithBrandAndTypeSpecification(queryParams);
+            var products =  await repo.GetALLAsync();
+            var mappedProducts = _mapper.Map<IEnumerable<ProductDto>>(products);
+            var countSpecs= new ProductCountSpecifications(queryParams);
+            var totalCount=await repo.CountAsync(countSpecs);
+            return new PaginatedResult<ProductDto>(queryParams.PageIndex, queryParams.PageSize, 0, mappedProducts);
         }
 
         public async Task<IEnumerable<TypeDto>> GetAllTypesAsync()
@@ -38,7 +45,8 @@ namespace ServicesLayer
 
         public async Task<ProductDto> GetProductByIdAsync(int id)
         {
-            var product = await _unitOfWork.GetRepository<Product, int>().GetByIdAsync(id);
+            var specs = new ProductWithBrandAndTypeSpecification(id);
+            var product = await _unitOfWork.GetRepository<Product, int>().GetByIdAsync(specs);
             return _mapper.Map<ProductDto>(product);
         }
     }

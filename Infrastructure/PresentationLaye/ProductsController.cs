@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Shared.DTOs;
+using Shared;
 
 namespace PresentationLaye
 {
@@ -16,9 +17,9 @@ namespace PresentationLaye
     {
         //Get All Products
         [HttpGet] //Get:: BaseUrl/api/Products
-        public async Task<ActionResult<IEnumerable<ProductDto>>> GetAllProducts()
+        public async Task<ActionResult<PaginatedResult<ProductDto>>> GetAllProducts([FromQuery]ProductQueryParams queryParams)
         {
-            var products= await _serviceManager.ProductService.GetAllProductsAsync();
+            var products= await _serviceManager.ProductService.GetAllProductsAsync(queryParams);
             return Ok(products);
 
         }

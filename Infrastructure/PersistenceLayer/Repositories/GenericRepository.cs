@@ -21,13 +21,46 @@ namespace PersistenceLayer.Repositories
         public async Task<IEnumerable<TEntity>> GetALLAsync()
           => await _dbContext.Set<TEntity>().ToListAsync();
 
-        public async Task<TEntity?> GetByIdAsync(TKey id)
-          => await _dbContext.Set<TEntity>().FindAsync(id);
+       
+
+       
 
         public void Remove(TEntity entity)
           => _dbContext.Set<TEntity>().Remove(entity);
 
         public void Update(TEntity entity)
           => _dbContext.Set<TEntity>().Update(entity);
+
+        public async Task<IEnumerable<TEntity>> GetAllAsync(ISpecification<TEntity, TKey> specifications)
+        {
+            //var baseQuery = _dbContext.Set<TEntity>();
+            //if (specifications.Criteria is not null)
+            //{
+            //    var criteria = specifications.Criteria;
+            //    baseQuery = baseQuery.Where(criteria);
+            //}
+            return  await SpecificationEvaluator.CreateQuery(_dbContext.Set<TEntity>(), specifications).ToListAsync();
+
+        }
+
+        public async Task<TEntity?> GetByIdAsync(ISpecification<TEntity, TKey> specifications)
+        {
+            //var baseQuery = _dbContext.Set<TEntity>();
+            //if (specifications.Criteria is not null)
+            //{
+            //    var criteria = specifications.Criteria;
+            //    baseQuery = baseQuery.Where(criteria);
+            //}
+            return await SpecificationEvaluator.CreateQuery(_dbContext.Set<TEntity>(), specifications).FirstOrDefaultAsync();
+
+        }
+
+        public async Task<TEntity?> GetByIdAsync(TKey id)
+          => await _dbContext.Set<TEntity>().FindAsync(id);
+
+        public async Task<int> CountAsync(ISpecification<TEntity, TKey> specifications)
+        {
+            return await SpecificationEvaluator.CreateQuery(_dbContext.Set<TEntity>(), specifications).CountAsync(); throw new NotImplementedException();
+        }
     }
 }
