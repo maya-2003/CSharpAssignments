@@ -32,6 +32,34 @@ namespace TalabatDemo.CustomMiddlewares
                 await HandleExceptionAsync(httpContext, ex);
             }
 
+            
+            static async Task HandleExceptionAsync(HttpContext httpContext, Exception ex)
+            {
+                var response = new ErrorToReturn()
+                {
+                    
+                    ErrorMessage = ex.Message
+                };
+                //Set Status Code For Response
+                httpContext.Response.StatusCode = ex switch
+                {
+                    NotFoundException => StatusCodes.Status404NotFound,
+                    UnauthorizedException => StatusCodes.Status401Unauthorized,
+                    BadRequestException badRequestEx=> GetBadRequestErrors(badRequestEx, response),
+                    _ => StatusCodes.Status500InternalServerError
+                };
+                response.StatusCode= httpContext.Response.StatusCode;
+                //Set Content Type For Response
+                httpContext.Response.ContentType = "application/json";
+                
+                await httpContext.Response.WriteAsJsonAsync(response);
+            }
+            static int GetBadRequestErrors(BadRequestException badRequestException, ErrorToReturn response)
+            {
+                response.Errors = badRequestException.Errors;
+                return StatusCodes.Status400BadRequest;
+
+            }
             static async Task HandleNotFoundEndPointAsyncC(HttpContext httpContext)
             {
                 if (httpContext.Response.StatusCode == StatusCodes.Status404NotFound)
@@ -44,27 +72,7 @@ namespace TalabatDemo.CustomMiddlewares
                     await httpContext.Response.WriteAsJsonAsync(response);
                 }
             }
-
-            static async Task HandleExceptionAsync(HttpContext httpContext, Exception ex)
-            {
-                //Set Status Code For Response
-                httpContext.Response.StatusCode = ex switch
-                {
-                    NotFoundException => StatusCodes.Status404NotFound,
-                    _ => StatusCodes.Status500InternalServerError
-                };
-                //Set Content Type For Response
-                httpContext.Response.ContentType = "application/json";
-                // Create Response Object
-                var response = new ErrorToReturn()
-                {
-                    StatusCode = StatusCodes.Status500InternalServerError,
-                    ErrorMessage = ex.Message
-                };
-                //Return Object As Json
-                //var responseToReturn=JsonSerializer.Serialize(response);
-                await httpContext.Response.WriteAsJsonAsync(response);
-            }
+            
         } 
     }
 }

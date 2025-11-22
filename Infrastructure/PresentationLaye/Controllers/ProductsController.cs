@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Shared;
 using Shared.DTOs.ProductDtos;
+using Microsoft.AspNetCore.Authorization;
 
 namespace PresentationLaye.Controllers
 {
@@ -25,6 +26,7 @@ namespace PresentationLaye.Controllers
         }
         //Get Product By Id
         [HttpGet("{id}")] //Get:: BaseUrl/api/Products/4
+        [Authorize(Roles ="Admin")]
         public async Task<ActionResult<ProductDto>> GetProductById(int id)
         {
             var product = await _serviceManager.ProductService.GetProductByIdAsync(id);

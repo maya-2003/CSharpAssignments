@@ -30,7 +30,9 @@ namespace TalabatDemo
             #region Register User-Defined Services
             builder.Services.AddApplicationServices();
             builder.Services.AddInfraStructureService(builder.Configuration);
-            builder.Services.AddWebApplicationServices(); 
+            builder.Services.AddWebApplicationServices(builder.Configuration);
+            
+
             #endregion
 
             var app = builder.Build();
@@ -52,6 +54,9 @@ namespace TalabatDemo
             app.UseAuthorization();
 
             app.UseStaticFiles();
+
+            app.UseAuthentication();
+            app.UseAuthorization();
             app.MapControllers();
 
             app.Run(); 

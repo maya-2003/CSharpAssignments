@@ -28,9 +28,10 @@ namespace ServicesLayer
         public async Task<BasketDto> GetBasketAsync(string key)
         {
             {
-                var basket=  await _basketRepository.GetBasketAsync(key);
+                var basket = await _basketRepository.GetBasketAsync(key);
                 if (basket is not null) return _mapper.Map<BasketDto>(basket);
                 else throw new BasketNotFoundException(key);
+            }
         }
     }
 }
