@@ -6,11 +6,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ServicesLayer.Specification
+namespace ServicesLayer.Specification.ProductModuleSpecifications
 {
     internal class ProductWithBrandAndTypeSpecification : BaseSpecification<Product, int>
     {
-        public ProductWithBrandAndTypeSpecification(ProductQueryParams queryParams) : base(p => (!queryParams.BrandId.HasValue || p.BrandId == queryParams.BrandId) && (!queryParams.TypeId.HasValue || p.TypeId== queryParams.TypeId) && (string.IsNullOrWhiteSpace(queryParams.SearchValue) || p.Name.ToLower().Contains(queryParams.SearchValue.ToLower())))
+        public ProductWithBrandAndTypeSpecification(ProductQueryParams queryParams) : base(p => (!queryParams.BrandId.HasValue || p.BrandId == queryParams.BrandId) && (!queryParams.TypeId.HasValue || p.TypeId == queryParams.TypeId) && (string.IsNullOrWhiteSpace(queryParams.SearchValue) || p.Name.ToLower().Contains(queryParams.SearchValue.ToLower())))
         {
             AddInclude(p => p.ProductType);
             AddInclude(p => p.ProductBrand);
@@ -37,11 +37,11 @@ namespace ServicesLayer.Specification
             ApplyPagination(queryParams.PageSize, queryParams.PageIndex);
         }
 
-        public ProductWithBrandAndTypeSpecification(int id) : base(p=> p.Id == id)
+        public ProductWithBrandAndTypeSpecification(int id) : base(p => p.Id == id)
         {
             AddInclude(p => p.ProductType);
             AddInclude(p => p.ProductBrand);
-            
+
         }
 
 

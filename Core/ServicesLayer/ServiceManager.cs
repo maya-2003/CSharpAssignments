@@ -22,5 +22,8 @@ namespace ServicesLayer
 
         private readonly Lazy<IAuthenticationService> _lazyAuthenticationService = new Lazy<IAuthenticationService>(() => new AuthenticationService(_userManager, _configuration, _mapper));
         public IAuthenticationService AuthenticationService => _lazyAuthenticationService.Value;
+
+        private readonly Lazy<IOrderService> _lazyOrderService = new Lazy<IOrderService>(() => new OrderService(_mapper, _basketRepository, _unitofWork));
+        public IOrderService OrderService => _lazyOrderService.Value;
     }
 }
