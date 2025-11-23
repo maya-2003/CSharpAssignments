@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using TalabatDemo.Factories;
+using Microsoft.OpenApi.Models;
 
 namespace TalabatDemo.Extentions
 {
@@ -10,7 +11,36 @@ namespace TalabatDemo.Extentions
     {
         public static IServiceCollection AddSwaggerService(this IServiceCollection Services) {
             Services.AddEndpointsApiExplorer();
-            Services.AddSwaggerGen();
+            Services.AddSwaggerGen( options =>
+            {
+                options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
+                {
+                    In=ParameterLocation.Header,
+                    Name="Authorization",
+                    Type=SecuritySchemeType.ApiKey,
+                    Scheme="Bearer",
+                    Description="Enter 'Bearer' Followed By Space And Your Token"
+
+                });
+                options.AddSecurityRequirement(new OpenApiSecurityRequirement()
+                {
+                    {
+                        new OpenApiSecurityScheme()
+                        {
+                            Reference=new OpenApiReference()
+                            {
+                                Id="Bearer",
+                                Type=ReferenceType.SecurityScheme
+                            }
+
+                        },
+                        new string[]{ }
+                    
+                    }
+                    
+
+                });
+            });
             return Services;
 
         }

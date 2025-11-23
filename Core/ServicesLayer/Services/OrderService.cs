@@ -12,14 +12,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ServicesLayer
+namespace ServicesLayer.Services
 {
     public class OrderService(IMapper _mapper, IBasketRepository _basketRepository, IUnitOfWork _unitOfWork) : IOrderService
     {
         public async Task<OrderToReturnDto> CreateOrderAsync(OrderDto orderDto, string email)
         {
             //Map Address
-            var orderAddress = _mapper.Map<OrderAddress>(orderDto.Address);
+            var orderAddress = _mapper.Map<OrderAddress>(orderDto.ShipToAddress);
             //Get Basket
             var basket = await _basketRepository.GetBasketAsync(orderDto.BasketId)
             ?? throw new BasketNotFoundException(orderDto.BasketId);
@@ -44,8 +44,8 @@ namespace ServicesLayer
 
 
             }
-            var deliveryMethod= await _unitOfWork
-                                .GetRepository<DeliveryMethod, int> ()
+            var deliveryMethod = await _unitOfWork
+                                .GetRepository<DeliveryMethod, int>()
                                 .GetByIdAsync(orderDto.DeliveryMethodId)
                                 ?? throw new DeliveryMethodNotFoundException(orderDto.DeliveryMethodId);
             //Sub Total
@@ -56,17 +56,17 @@ namespace ServicesLayer
 
             await _unitOfWork.GetRepository<Order, Guid>().AddAsync(order);
             await _unitOfWork.SaveChangesAsync();
-            return _mapper.Map <OrderToReturnDto>(order);
+            return _mapper.Map<OrderToReturnDto>(order);
         }
 
         public async Task<IEnumerable<OrderToReturnDto>> GetAllOrdersAsync(string email)
         {
             var specs = new OrderSpecifications(email);
-            var orders= await _unitOfWork.GetRepository<Order, Guid>().GetAllAsync(specs);
+            var orders = await _unitOfWork.GetRepository<Order, Guid>().GetAllAsync(specs);
             return _mapper.Map<IEnumerable<OrderToReturnDto>>(orders);
         }
 
-        
+
 
         public async Task<OrderToReturnDto> GetOrderByIdAsync(Guid id)
         {
@@ -77,7 +77,7 @@ namespace ServicesLayer
 
         public async Task<IEnumerable<DeliveryMethodDto>> GetDeliveryMethodsAsync()
         {
-            var deliveryMethods=  await _unitOfWork.GetRepository<DeliveryMethod, int>().GetALLAsync(); 
+            var deliveryMethods = await _unitOfWork.GetRepository<DeliveryMethod, int>().GetALLAsync();
             return _mapper.Map<IEnumerable<DeliveryMethodDto>>(deliveryMethods);
         }
     }

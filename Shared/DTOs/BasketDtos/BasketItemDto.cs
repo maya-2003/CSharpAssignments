@@ -14,7 +14,7 @@ namespace Shared.DTOs.BasketDtos
         public string PictureUrl { get; set; } = null;
         [Range(10,10000)]
         public decimal Price { get; set; }
-        [Range(10, 100)]
+        [Range(1, 100)]
         public int Quantity { get; set; }
     }
 }

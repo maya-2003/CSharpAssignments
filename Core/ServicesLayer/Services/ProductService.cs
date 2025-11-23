@@ -11,19 +11,20 @@ using Shared;
 using DomainLayer.Exceptions;
 using DomainLayer.Models.ProductModels;
 using Shared.DTOs.ProductDtos;
+using ServicesLayer.Specification.ProductModuleSpecifications;
 
 
-namespace ServicesLayer
+namespace ServicesLayer.Services
 {
-    public class ProductService (IUnitOfWork _unitOfWork, IMapper _mapper) : IProductService
+    public class ProductService(IUnitOfWork _unitOfWork, IMapper _mapper) : IProductService
     {
         public async Task<IEnumerable<BrandDto>> GetAllBrandsAsync()
         {
             var repo = _unitOfWork.GetRepository<ProductBrand, int>();
             var brands = await repo.GetALLAsync();
-            var brandsDtos = _mapper. Map<IEnumerable<BrandDto>>(brands);
+            var brandsDtos = _mapper.Map<IEnumerable<BrandDto>>(brands);
             return brandsDtos;
-            
+
 
         }
 
@@ -31,16 +32,17 @@ namespace ServicesLayer
         {
             var repo = _unitOfWork.GetRepository<Product, int>();
             var specs = new ProductWithBrandAndTypeSpecification(queryParams);
-            var products =  await repo.GetALLAsync();
+            var countSpecs = new ProductCountSpecifications(queryParams);
+            var products = await repo.GetAllAsync(specs);
             var mappedProducts = _mapper.Map<IEnumerable<ProductDto>>(products);
-            var countSpecs= new ProductCountSpecifications(queryParams);
-            var totalCount=await repo.CountAsync(countSpecs);
-            return new PaginatedResult<ProductDto>(queryParams.PageIndex, queryParams.PageSize, 0, mappedProducts);
+            
+            var totalCount = await repo.CountAsync(countSpecs);
+            return new PaginatedResult<ProductDto>(queryParams.PageNumber, queryParams.PageSize, totalCount, mappedProducts);
         }
 
         public async Task<IEnumerable<TypeDto>> GetAllTypesAsync()
         {
-            var types=  await _unitOfWork.GetRepository<ProductType, int>().GetALLAsync();
+            var types = await _unitOfWork.GetRepository<ProductType, int>().GetALLAsync();
             return _mapper.Map<IEnumerable<TypeDto>>(types);
         }
 

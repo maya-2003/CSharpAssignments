@@ -20,16 +20,12 @@ namespace PersistenceLayer
     {
         public static IServiceCollection AddInfraStructureService(this IServiceCollection Services, IConfiguration _configuration)
         {
+            #region Db Connections
             Services.AddDbContext<StoreDbContext>(options =>
-            {
-                options.UseSqlServer(_configuration.GetConnectionString("DefaultConnection"));
-            });
-
-            Services.AddScoped<IDataSeeding, DataSeeding>();
-            Services.AddScoped<IUnitOfWork, UnitOfWork>();
-
-            Services.AddScoped<IBasketRepository, BasketRepository>();
-            Services.AddSingleton<IConnectionMultiplexer>( (_) =>
+                {
+                    options.UseSqlServer(_configuration.GetConnectionString("DefaultConnection"));
+                });
+            Services.AddSingleton<IConnectionMultiplexer>((_) =>
             {
                 return ConnectionMultiplexer.Connect(_configuration.GetConnectionString("ReddisConnectionString"));
             });
@@ -37,9 +33,14 @@ namespace PersistenceLayer
             {
                 options.UseSqlServer(_configuration.GetConnectionString("IdentityConnection"));
             });
-
             Services.AddIdentityCore<ApplicationUser>().AddRoles<IdentityRole>()
-                    .AddEntityFrameworkStores<StoreIdentityDbContext>();
+                    .AddEntityFrameworkStores<StoreIdentityDbContext>(); 
+            #endregion
+
+            Services.AddScoped<IDataSeeding, DataSeeding>();
+            Services.AddScoped<IUnitOfWork, UnitOfWork>();
+            Services.AddScoped<IBasketRepository, BasketRepository>();
+            Services.AddScoped<ICacheRepository,CacheRepository>();
 
             return Services;
         }

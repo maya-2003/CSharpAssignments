@@ -17,9 +17,9 @@ using System.Text;
 using System.Threading.Tasks;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
-namespace ServicesLayer
+namespace ServicesLayer.Services
 {
-    public class AuthenticationService(UserManager <ApplicationUser> _userManager, IConfiguration _configuration, IMapper _mapper) : IAuthenticationService
+    public class AuthenticationService(UserManager<ApplicationUser> _userManager, IConfiguration _configuration, IMapper _mapper) : IAuthenticationService
     {
         public async Task<bool> CheckEmailAsync(string email)
         {
@@ -29,7 +29,7 @@ namespace ServicesLayer
 
         public async Task<AddressDto> GetCurrentUserAddress(string email)
         {
-            var user= await _userManager.Users
+            var user = await _userManager.Users
                     .Include(u => u.Address).FirstOrDefaultAsync() ??
                     throw new UserNotFoundException(email);
 
@@ -52,14 +52,14 @@ namespace ServicesLayer
             var user = await _userManager.FindByEmailAsync(loginDto.Email);
             if (user is null) throw new UserNotFoundException(loginDto.Email);
             //Check Pass
-            var isPassValid= await _userManager.CheckPasswordAsync(user, loginDto.Password);
+            var isPassValid = await _userManager.CheckPasswordAsync(user, loginDto.Password);
             if (isPassValid)
             {
                 return new UserDto()
                 {
-                Email=user.Email!,
-                DisplayName=user. DisplayName,
-                Token =await CreateTokenAsync(user)
+                    Email = user.Email!,
+                    DisplayName = user.DisplayName,
+                    Token = await CreateTokenAsync(user)
                 };
             }
             else throw new UnauthorizedException();
@@ -69,13 +69,13 @@ namespace ServicesLayer
         {
             //Convert Dto To Entity
             var user = new ApplicationUser()
-                {
-                DisplayName=registerDto.DisplayName,
-                Email=registerDto.Email,
-                PhoneNumber=registerDto.PhoneNumber,
-                UserName=registerDto.UserName,
-                };
-            var res= await _userManager.CreateAsync(user, registerDto.Password);
+            {
+                DisplayName = registerDto.DisplayName,
+                Email = registerDto.Email,
+                PhoneNumber = registerDto.PhoneNumber,
+                UserName = registerDto.UserName ?? registerDto.Email.Split("@")[0],
+            };
+            var res = await _userManager.CreateAsync(user, registerDto.Password);
             if (res.Succeeded) return new UserDto()
             {
                 DisplayName = user.DisplayName,
@@ -84,11 +84,11 @@ namespace ServicesLayer
             };
             else
             {
-                var errors=res.Errors.Select(e => e.Description).ToList();
+                var errors = res.Errors.Select(e => e.Description).ToList();
                 throw new BadRequestException(errors);
 
             }
-                
+
         }
 
         public async Task<AddressDto> UpdateUserAddress(string email, AddressDto addressDto)
@@ -125,7 +125,7 @@ namespace ServicesLayer
             var roles = await _userManager.GetRolesAsync(user);
             foreach (var role in roles)
                 claims.Add(new Claim(ClaimTypes.Role, role));
-            var secretkey =_configuration["JwtOptions:SecretKey"];
+            var secretkey = _configuration["JwtOptions:SecretKey"];
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretkey));
             var creds = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
             var token = new JwtSecurityToken(

@@ -12,6 +12,7 @@ using TalabatDemo.CustomMiddlewares;
 using TalabatDemo.Factories;
 using PresentationLaye;
 using TalabatDemo.Extentions;
+using Swashbuckle.AspNetCore.SwaggerUI;
 
 namespace TalabatDemo
 {
@@ -25,6 +26,15 @@ namespace TalabatDemo
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddSwaggerService();
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAll", builder =>
+                {
+                    builder.AllowAnyHeader();
+                    builder.AllowAnyMethod();
+                    builder.AllowAnyOrigin();
+                });
+            });
 
 
             #region Register User-Defined Services
@@ -46,17 +56,27 @@ namespace TalabatDemo
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
-                app.UseSwaggerUI();
+                app.UseSwaggerUI(options =>
+                {
+                    options.ConfigObject = new ConfigObject()
+                    {
+                        DisplayRequestDuration = true
+                    };
+                    options.DocumentTitle = "Talabat Ecommerce App";
+                    options.DocExpansion(DocExpansion.None);
+                    options.EnableFilter();
+                    options.EnablePersistAuthorization();
+                }
+                );
             }
 
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
+            app.UseAuthentication();
 
             app.UseStaticFiles();
-
-            app.UseAuthentication();
-            app.UseAuthorization();
+            app.UseCors("AllowAll");
             app.MapControllers();
 
             app.Run(); 

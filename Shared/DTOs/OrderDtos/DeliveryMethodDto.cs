@@ -17,7 +17,7 @@ namespace Shared.DTOs.OrderDtos
 
         public string DeliveryTime { get; set; } = null!;
 
-        public decimal Price { get; set; }
+        public decimal Cost { get; set; }
         
     }
 }

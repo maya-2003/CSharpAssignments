@@ -10,11 +10,11 @@ namespace ServicesLayer.Specification.ProductModuleSpecifications
 {
     internal class ProductWithBrandAndTypeSpecification : BaseSpecification<Product, int>
     {
-        public ProductWithBrandAndTypeSpecification(ProductQueryParams queryParams) : base(p => (!queryParams.BrandId.HasValue || p.BrandId == queryParams.BrandId) && (!queryParams.TypeId.HasValue || p.TypeId == queryParams.TypeId) && (string.IsNullOrWhiteSpace(queryParams.SearchValue) || p.Name.ToLower().Contains(queryParams.SearchValue.ToLower())))
+        public ProductWithBrandAndTypeSpecification(ProductQueryParams queryParams) : base(p => (!queryParams.BrandId.HasValue || p.BrandId == queryParams.BrandId) && (!queryParams.TypeId.HasValue || p.TypeId == queryParams.TypeId) && (string.IsNullOrWhiteSpace(queryParams.Search) || p.Name.ToLower().Contains(queryParams.Search.ToLower())))
         {
             AddInclude(p => p.ProductType);
             AddInclude(p => p.ProductBrand);
-            switch (queryParams.SortingOption)
+            switch (queryParams.Sort)
             {
                 case ProductSortingOptions.NameAsc:
                     AddOrderBy(p => p.Name);
@@ -34,7 +34,7 @@ namespace ServicesLayer.Specification.ProductModuleSpecifications
 
             }
 
-            ApplyPagination(queryParams.PageSize, queryParams.PageIndex);
+            ApplyPagination(queryParams.PageSize, queryParams.PageNumber);
         }
 
         public ProductWithBrandAndTypeSpecification(int id) : base(p => p.Id == id)

@@ -4,15 +4,11 @@ using DomainLayer.Models.IdentityModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using ServiceAbstractionLayer;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using ServicesLayer.Services;
 
 namespace ServicesLayer
 {
-    public class ServiceManager (IUnitOfWork _unitofWork,IMapper _mapper, IBasketRepository _basketRepository, UserManager<ApplicationUser> _userManager, IConfiguration _configuration) : IServiceManager
+    public class ServiceManager (IUnitOfWork _unitofWork,IMapper _mapper, IBasketRepository _basketRepository, UserManager<ApplicationUser> _userManager, IConfiguration _configuration)  /*IServiceManager*/
     {
         private readonly Lazy<IProductService> _lazyProductService = new Lazy<IProductService> (()=> new ProductService(_unitofWork, _mapper));
         public IProductService ProductService => _lazyProductService.Value;
